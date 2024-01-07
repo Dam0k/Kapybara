@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapybara</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: url('grass.jpg'); 
+            background-size: cover;
+        }
+
+        .kapibara {
+            position: absolute;
+            width: 150px;
+            height: auto;
+            cursor: pointer;
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: white;
+        }
+
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: white;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let score = 0;
+            const targetScore = 9;
+            const respawnInterval = 3000; // 5 seconds
+            const gameArea = document.body;
+
+            // Pole s cestami k obrázkům kapybar
+            const kapybaraImages = ['kapybara1.png', 'kapybara2.png', 'kapybara3.png', 'kapybara4.png', 'kapybara5.png'];
+
+            // Funkce pro získání náhodného obrázku z pole
+            function getRandomImage() {
+                const randomIndex = Math.floor(Math.random() * kapybaraImages.length);
+                return kapybaraImages[randomIndex];
+            }
+
+            // Vytvoření nové kapybary
+            function createKapibara() {
+                const kapibara = document.createElement('img');
+                kapibara.src = getRandomImage(); // Použij náhodný obrázek kapybary
+                kapibara.className = 'kapibara';
+                kapibara.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+                kapibara.style.top = Math.random() * (window.innerHeight - 150) + 'px';
+                kapibara.addEventListener('click', handleKapibaraClick);
+                gameArea.appendChild(kapibara);
+            }
+
+            // Obsluha kliknutí na kapybaru
+            function handleKapibaraClick() {
+                score++;
+                updateScore();
+                this.style.display = 'none'; // Skryj kapybaru po kliknutí
+                if (score === targetScore) {
+                    showGameOver();
+                    setTimeout(resetGame, respawnInterval);
+                }
+            }
+
+            // Aktualizace skóre na stránce
+            function updateScore() {
+                document.getElementById('score').innerText = `Score: ${score}`;
+            }
+
+            // Reset hry
+            function resetGame() {
+                score = 0;
+                updateScore();
+                removeAllKapybaras();
+                hideGameOver();
+                setTimeout(createKapibara, respawnInterval);
+            }
+
+            // Odstranění všech kapybar
+            function removeAllKapybaras() {
+                const kapybaras = document.querySelectorAll('.kapibara');
+                kapybaras.forEach(kapibara => kapibara.remove());
+            }
+
+            // Zobrazení konce hry
+            function showGameOver() {
+                document.getElementById('game-over').style.display = 'block';
+            }
+
+            // Skrytí konce hry
+            function hideGameOver() {
+                document.getElementById('game-over').style.display = 'none';
+            }
+
+            // Vytvoření první kapybary a nastavení intervalu pro další
+            setInterval(createKapibara, respawnInterval);
+            updateScore();
+        });
+    </script>
+    <div id="score"></div>
+    <div id="game-over">Game Over!</div>
+</body>
+</html>
